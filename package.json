@@ -1,0 +1,32 @@
+{
+  "name": "roonbox",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "node deploy-commands.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AntoineFaul/RoonBox.git"
+  },
+  "keywords": [
+    "discord",
+    "music",
+    "bot"
+  ],
+  "author": "Roon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AntoineFaul/RoonBox/issues"
+  },
+  "homepage": "https://github.com/AntoineFaul/RoonBox#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/voice": "^0.7.2",
+    "discord-api-types": "^0.23.1",
+    "discord.js": "^13.3.1"
+  }
+}
