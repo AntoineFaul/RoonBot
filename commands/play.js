@@ -12,6 +12,11 @@ module.exports = {
 
   async execute(interaction) {
     await interaction.deferReply();
-    await interaction.reply('Playing');
+
+    const user = interaction.user;
+    const guildId = interaction.guildId;
+    console.log(interaction.member.voice.channelId);
+    console.log(interaction);
+    await interaction.editReply('Playing');
   },
 }
