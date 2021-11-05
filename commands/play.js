@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { manager } = require('../audio');
 
 module.exports = { 
   data: new SlashCommandBuilder()
@@ -12,11 +13,16 @@ module.exports = {
 
   async execute(interaction) {
     await interaction.deferReply();
-
+    /* TODO 
+     * Replace reply par editReply and deferReply
+     * Add check for in guild
+     * Add check for link, type string
+     * */
     const user = interaction.user;
     const guildId = interaction.guildId;
-    console.log(interaction.member.voice.channelId);
-    console.log(interaction);
-    await interaction.editReply('Playing');
+    const link = interaction.options.get("link", true);
+    //console.log(interaction.member.voice);
+    const songTitle = await manager.addSong(interaction.member.guild, interaction.member.voice.channelId, link);
+    await interaction.editReply(`Playing ${songTitle}.`);
   },
 }
