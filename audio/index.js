@@ -155,15 +155,16 @@ class Manager {
     /* TODO
      * Check if bot is not busy in another channel
      */
+    const videosPromise = youtube.findVideo(query.value);
+    
     let bot = this.bots.get(guild.id);
     if (bot === undefined) {
       console.log("New bot required");
       bot = new Bot(guild);
       this.bots.set(guild.id, bot);
+      bot.connect(channel);
     }
 
-    const videosPromise = youtube.findVideo(query.value);
-    bot.connect(channel);
 
     const videos = await videosPromise
     const video = videos.items[0]
