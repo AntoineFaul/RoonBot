@@ -32,7 +32,15 @@ class Bot {
     this.queue = [];
     this.player = createAudioPlayer();
 
-    this.player.on(AudioPlayerStatus.Idle, () => {
+    this.player.on(AudioPlayerStatus.Idle, (oldState, newState) => {
+      if (oldState.status === AudioPlayerStatus.Playing) {
+        console.log("Playing ended, will start again");
+        this.startPlaying();
+      }
+      if (oldState.status === AudioPlayerStatus.Buffering) {
+        console.log("Buffering failed, will start again");
+        this.startPlaying();
+      }
     });
 
     this.player.on(AudioPlayerStatus.Buffering, () => {
@@ -48,12 +56,27 @@ class Bot {
     });
 
     this.player.on('error', error => {
-      console.error(`Error: ${error.message} with resource ${error.resource.metadata.title}`);
+      console.error(`Error: ${error.message}`);
     });
 
     this.player.on('stateChange', (oldState, newState) => {
 	    console.log(`Audio player transitioned from ${oldState.status} to ${newState.status}`);
     });
+  }
+
+  async waitForSong() {
+    const start_time = new Date().getTime();
+   
+    while (true) {
+      const video = this.queue.shift();
+      if (video !== undefined) {
+        return video;
+      }
+      if (new Date() > start_time + (1000*60*5)) {
+        return undefined;
+      }
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
   }
 
   connect(channel) {
@@ -80,7 +103,7 @@ class Bot {
           entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
         ]);
       } catch (error) {
-        connection.destroy();
+        this.leave();
       }
 
     });
@@ -93,17 +116,21 @@ class Bot {
     });
 
     connection.subscribe(this.player);
+    this.startPlaying();
   }
 
   addQueue(video) {
     this.queue.push(video);
-    //this.player.notify();
   }
 
   async startPlaying() {
-    const stream = await youtube.getAudioStream(this.queue[0]);
+    this.player.stop();
+    const video = await this.waitForSong();
+    if (video === undefined) {
+      this.leave();
+    }
+    const stream = await youtube.getAudioStream(video);
     const resource = createAudioResource(stream, { inputType: StreamType.WebmOpus });
-    console.log("Start playing");
     this.player.play(resource);
   }
 
@@ -112,6 +139,7 @@ class Bot {
   }
 
   leave() {
+    manager.bots.delete(this.guild.id);
     this.player.stop();
     this.player = null;
     const connection = getVoiceConnection(this.guild.id);
@@ -129,6 +157,7 @@ class Manager {
      */
     let bot = this.bots.get(guild.id);
     if (bot === undefined) {
+      console.log("New bot required");
       bot = new Bot(guild);
       this.bots.set(guild.id, bot);
     }
@@ -139,9 +168,24 @@ class Manager {
     const videos = await videosPromise
     const video = videos.items[0]
     bot.addQueue(video);
-    bot.startPlaying();
 
     return video.title;
+  }
+  
+  async quitBot(guild) {
+    const bot = this.bots.get(guild.id);
+    if (bot === undefined) {
+      return;
+    }
+    bot.leave();
+  }
+
+  async skip(guild) {
+    let bot = this.bots.get(guild.id);
+    if (bot === undefined) {
+      return "Nothing";
+    }
+    bot.startPlaying();
   }
 }
 
