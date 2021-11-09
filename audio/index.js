@@ -80,7 +80,11 @@ class Bot {
   }
 
   connect(channel) {
-    const connection = joinVoiceChannel({
+    let connection = getVoiceConnection(this.guild.id);
+    if (connection !== undefined) {
+      connection.destroy();
+    }
+    connection = joinVoiceChannel({
       channelId: channel,
       guildId: this.guild.id,
       adapterCreator: this.guild.voiceAdapterCreator,
@@ -187,6 +191,24 @@ class Manager {
       return "Nothing";
     }
     bot.startPlaying();
+  }
+
+  async join(guild, channel) {
+    let bot = this.bots.get(guild.id);
+    if (bot === undefined) {
+      console.log("New bot required");
+      bot = new Bot(guild);
+      this.bots.set(guild.id, bot);
+    }
+    bot.connect(channel);
+  }
+
+  async state(guild) {
+    const bot = this.bots.get(guild.id);
+    if (bot === undefined) {
+      return "Bot does not exist for this guild";
+    }
+    return `Queue: ${bot.queue}`;
   }
 }
 
