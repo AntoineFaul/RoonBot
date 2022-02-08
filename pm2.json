@@ -1,8 +1,8 @@
 {
-  "apps": [
-    {
-      "name": "Roonbot",
-      "script": "index.js"
-    }
-  ]
+	"apps": [
+		{
+			"name": "roonbot",
+			"script": "index.js"
+		}
+	]
 }
