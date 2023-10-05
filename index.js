@@ -2,14 +2,11 @@
 
 // Require the necessary discord.js classes
 const fs = require('fs');
-const { Client, Collection, Intents } = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 
 // Create a new client instance
-const intents = new Intents();
-intents.add(Intents.FLAGS.GUILDS);
-intents.add(Intents.FLAGS.GUILD_VOICE_STATES);
-const client = new Client({ intents: intents });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, 1<<7] });
 
 // Read command from commands folder
 client.commands = new Collection();

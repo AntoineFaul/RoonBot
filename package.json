@@ -24,18 +24,17 @@
   "homepage": "https://github.com/AntoineFaul/RoonBox#readme",
   "dependencies": {
     "@discordjs/builders": "^0.6.0",
-    "@discordjs/opus": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@discordjs/voice": "^0.7.2",
     "discord-api-types": "^0.23.1",
-    "discord.js": "^13.3.1",
+    "discord.js": "^14.13.0",
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.4.0",
     "libsodium-wrappers": "^0.7.9",
     "opusscript": "^0.0.8",
     "sodium": "^3.0.2",
     "tweetnacl": "^1.0.3",
-    "ytdl-core": "^4.9.1",
-    "ytsr": "^3.5.3"
+    "ytdl-core": "^4.11.5",
+    "ytsr": "^3.8.4"
   }
 }
